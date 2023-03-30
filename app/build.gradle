@@ -2,11 +2,19 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'org.jetbrains.kotlin.kapt'
+    id 'com.google.dagger.hilt.android'
 }
 
 android {
     namespace 'hackeru.noameil.finalmoviesproject'
     compileSdk 33
+
+    //pointer to a file:
+    def apiKeyFile = rootProject.file("apikey.properties")
+    //~Map (key, value)
+    def props = new Properties()
+    //parse the file into the map
+    props.load(new FileInputStream(apiKeyFile))
 
     defaultConfig {
         applicationId "hackeru.noameil.finalmoviesproject"
@@ -16,6 +24,9 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "TMDB_API_KEY", props["TMDB_API_KEY"])
+        buildConfigField("String", "TMDB_BASE_URL", props["TMDB_BASE_URL"])
     }
 
     buildTypes {
@@ -37,6 +48,9 @@ android {
 }
 
 dependencies {
+
+    implementation("com.google.dagger:hilt-android:2.44")
+    kapt("com.google.dagger:hilt-android-compiler:2.44")
 
     def room_version = "2.5.1"
 
@@ -75,4 +89,8 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}
+
+kapt {
+    correctErrorTypes = true
 }
